@@ -26,14 +26,12 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r aqi_predictor/requirements.txt
+          pip install -r requirements.txt
 
       - name: Run training pipeline
-        working-directory: aqi_predictor
         run: python training_pipeline.py
 
       - name: Commit updated model
-        working-directory: aqi_predictor
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -46,5 +44,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: training-pipeline-logs
-          path: aqi_predictor/logs/
+          path: logs/
           retention-days: 7

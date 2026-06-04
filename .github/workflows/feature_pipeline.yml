@@ -26,10 +26,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r aqi_predictor/requirements.txt
+          pip install -r requirements.txt
 
       - name: Run feature pipeline
-        working-directory: aqi_predictor
         env:
           OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
           CITY: Karachi
@@ -38,7 +37,6 @@ jobs:
         run: python feature_pipeline.py
 
       - name: Commit updated CSV
-        working-directory: aqi_predictor
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -51,5 +49,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: feature-pipeline-logs
-          path: aqi_predictor/logs/
+          path: logs/
           retention-days: 7
