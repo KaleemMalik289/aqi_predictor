@@ -453,7 +453,8 @@ def parse_live_data(weather_data, pollution_data):
 
 def build_feature_row(live: dict, hour_offset: int = 0) -> pd.DataFrame:
     """Build a single-row DataFrame with the 21 features expected by the model."""
-    now = dt.datetime.now() + dt.timedelta(hours=hour_offset)
+    # Cloud servers run in UTC. Karachi is UTC+5.
+    now = dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=5 + hour_offset)
     hour = now.hour
     dow = now.weekday()
     month = now.month
@@ -596,7 +597,8 @@ def render_sidebar(metadata: dict, live: dict):
 # ── 1. Hero Header ────────────────────────────────────────────────────────
 
 def render_hero():
-    now = dt.datetime.now()
+    # Cloud servers run in UTC. Karachi is UTC+5.
+    now = dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=5)
     date_str = now.strftime("%A, %B %d, %Y • %I:%M %p")
     st.markdown(f"""
     <div class="hero-header">
