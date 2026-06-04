@@ -1,0 +1,55 @@
+name: Hourly Feature Pipeline
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # Every hour at :00
+  workflow_dispatch:       # Manual trigger
+
+permissions:
+  contents: write          # Needed to push CSV back
+
+jobs:
+  collect-features:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r aqi_predictor/requirements.txt
+
+      - name: Run feature pipeline
+        working-directory: aqi_predictor
+        env:
+          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+          CITY: Karachi
+          LAT: '24.8607'
+          LON: '67.0011'
+        run: python feature_pipeline.py
+
+      - name: Commit updated CSV
+        working-directory: aqi_predictor
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/aqi_features_karachi.csv
+          git diff --cached --quiet || git commit -m "chore: hourly feature update [skip ci]"
+          git push
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: feature-pipeline-logs
+          path: aqi_predictor/logs/
+          retention-days: 7
