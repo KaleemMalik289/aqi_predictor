@@ -1,0 +1,10 @@
+{
+  "model_type": "RandomForest",
+  "timestamp": "20260816_010331",
+  "rmse": 0.6016353807409697,
+  "mae": 0.41708698826864504,
+  "r2": 0.27183232164939464,
+  "train_samples": 0,
+  "test_samples": 428,
+  "features_used": 21
+}
